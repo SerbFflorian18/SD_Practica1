@@ -4,8 +4,6 @@ import grpc
 import insultingServer_pb2
 import insultingServer_pb2_grpc
 
-# COMENTARIO DE TEST
-
 # open a gRPC channel
 channel = grpc.insecure_channel('localhost:50051')
 
