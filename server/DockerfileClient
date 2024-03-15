@@ -1,0 +1,14 @@
+# Usa una imagen base de Python
+FROM python:3.9-slim
+
+# Establece el directorio de trabajo en /app
+WORKDIR /app
+
+# Copia el script del cliente a la imagen
+COPY client.py .
+
+# Instala las dependencias necesarias
+RUN pip install grpcio grpcio-tools
+
+# Define el comando por defecto para ejecutar el cliente
+CMD ["python", "client.py"]

@@ -1,0 +1,42 @@
+syntax = "proto3";
+
+package server;
+
+service NameServer {
+    rpc Register(RegisterRequest) returns (RegisterResponse) {}
+    rpc Lookup(LookupRequest) returns (LookupResponse) {}
+    rpc DiscoverChats(DiscoverChatsRequest) returns (DiscoverChatsResponse) {}
+    rpc JoinInsultChannel(JoinInsultChannelRequest) returns (JoinInsultChannelResponse) {}
+}
+
+message RegisterRequest {
+    string username = 1;
+    string ip_address = 2;
+    int32 port = 3;
+}
+
+message RegisterResponse {
+    string message = 1;
+}
+
+message LookupRequest {
+    string username = 1;
+}
+
+message LookupResponse {
+    string ip_address = 1;
+    int32 port = 2;
+    string message = 3;
+}
+
+message DiscoverChatsRequest {}
+
+message DiscoverChatsResponse {
+    repeated string chats = 1;
+}
+
+message JoinInsultChannelRequest {}
+
+message JoinInsultChannelResponse {
+    string message = 1;
+}
