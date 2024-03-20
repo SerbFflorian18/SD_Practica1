@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    restart: always
+    ports:
+      - "15672:15672"  # Puerto para la interfaz de gestión
+      - "5672:5672"    # Puerto para la comunicación con los clientes
+    volumes:
+      - ./data:/var/lib/rabbitmq/mnesia  # Persistencia de datos
+    environment:
+      RABBITMQ_DEFAULT_USER: AI
+      RABBITMQ_DEFAULT_PASS: IA
+
+#Configuracion RabbitMQ Direct -> 1 a 1, el exchange hace que el mensaje le llegue al cliente
+#Configuracion Topic hace mediante RoutingKey, el mensaje le llegue a los clientes que tengan la misma RoutingKey, si esta suscrito le llega
+#Configuracion Fanout NO necesita RoutingKey, no importa si pides para que le envies, el envia a todos
+
+networks:
+  rabbitmq_net:
