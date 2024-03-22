@@ -9,9 +9,9 @@ connection = pika.BlockingConnection(connection_parameters)
 
 channel = connection.channel()
 
-channel.queue_declare(queue='ChatPrivat')
+channel.queue_declare(queue='chat')
 
-channel.basic_consume(queue='ChatPrivat', auto_ack=True,
+channel.basic_consume(queue='chat', auto_ack=True,
     on_message_callback=on_message_received)
 
 print("Starting Consuming")

@@ -6,11 +6,11 @@ connection = pika.BlockingConnection(connection_parameters)
 
 channel = connection.channel()
 
-channel.queue_declare(queue='ChatPrivat')
+channel.queue_declare(queue='chat')
 
 message = "Hello, this is my first message"
 
-channel.basic_publish(exchange='', routing_key='ChatPrivat', body=message)
+channel.basic_publish(exchange='chat', routing_key='chat', body=message)
 
 print(f"Sent message: {message}")
 
