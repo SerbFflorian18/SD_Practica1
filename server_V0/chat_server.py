@@ -1,13 +1,11 @@
 import grpc
-from grpc_files import chatserver_pb2
-from grpc_files import chatserver_pb2_grpc
-#import nameserver_pb2
-#import nameserver_pb2_grpc
+import chatserver_pb2
+import chatserver_pb2_grpc
+import nameserver_pb2
+import nameserver_pb2_grpc
 from concurrent import futures
 import logging
 import os
-
-
 
 # Configuración de logging
 logging.basicConfig(level=logging.INFO)
@@ -20,7 +18,7 @@ NAME_SERVER_PORT = int(os.getenv('NAME_SERVER_PORT', 8000))
 class ChatServerServicer(chatserver_pb2_grpc.ChatServerServicer):
     def __init__(self):
         self.name_server_channel = grpc.insecure_channel(f"{NAME_SERVER_HOST}:{NAME_SERVER_PORT}")
-        #self.name_server_stub = nameserver_pb2_grpc.NameServerStub(self.name_server_channel)
+        self.name_server_stub = nameserver_pb2_grpc.NameServerStub(self.name_server_channel)
 
     def SendMessage(self, request, context):
         try:

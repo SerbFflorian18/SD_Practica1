@@ -85,7 +85,7 @@ def serve():
         logger.info("Server started. Listening on port 8000.")
         server.wait_for_termination()
     except Exception as e:
-        logger.error(f"Failed to start server: {str(e)}")
+        logger.error(f"Failed to start server_V0: {str(e)}")
         raise
 
 if __name__ == '__main__':

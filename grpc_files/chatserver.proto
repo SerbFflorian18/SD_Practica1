@@ -1,0 +1,45 @@
+syntax = "proto3";
+
+package server;
+
+service ChatServer {
+    rpc SendMessage(SendMessageRequest) returns (SendMessageResponse) {}
+    rpc ReceiveMessage(ReceiveMessageRequest) returns (ReceiveMessageResponse) {}
+    rpc ConnectToChat(ConnectToChatRequest) returns (ConnectToChatResponse) {}
+    rpc SubscribeToGroupChat(SubscribeToGroupChatRequest) returns (SubscribeToGroupChatResponse) {}
+}
+
+message SendMessageRequest {
+    string sender = 1;
+    string receiver = 2;
+    string message = 3;
+}
+
+message SendMessageResponse {
+    string message = 1;
+}
+
+message ReceiveMessageRequest {
+    string receiver = 1;
+}
+
+message ReceiveMessageResponse {
+    repeated Message messages = 1;
+
+    message Message {
+        string sender = 1;
+        string message = 2;
+    }
+}
+
+message ConnectToChatRequest {}
+
+message ConnectToChatResponse {
+    string message = 1;
+}
+
+message SubscribeToGroupChatRequest {}
+
+message SubscribeToGroupChatResponse {
+    string message = 1;
+}
