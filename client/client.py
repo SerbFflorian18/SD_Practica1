@@ -1,23 +1,60 @@
 import logging
 import os
+import time
+from concurrent import futures
+
+import grpc
+
 import connect
+import chatserver_pb2
+import chatserver_pb2_grpc
+
+from message_server import start_server, MessageServer
 
 # Configuración de logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
 class ChatClient:
 
-    def __init__(self):
-        chat = connect.Connect('localhost', 8000)
-        chat.create_connection()
+    def __init__(self, mine):
+        self.mine = mine
+        self.chat = None
+        self.connected = False
+        self.message = ""
+        self.new_message = False
 
-
-
-    def connect_to_chat(self):
+    def connect_to_chat(self, host, port, second_con):
         try:
-            chat = connect.Connect('localhost', 8000)
-            chat.create_connection()
-            logger.info("Connected to chat successfully.")
+            self.chat = connect.Connect(host, port)
+            self.chat.create_connection()
+            self.connected = True
+            if not second_con:
+                req = chatserver_pb2.ConnectToChatRequest(sender=self.mine, receiver=host + ":" + str(port))
+                res = self.chat.stub.ConnectToChat(req)
+
+
+                if int(res.accept) == 1:
+                    print("Request accepted")
+                    logger.info("Connected to chat")
+                else:
+                    print("Request denied")
+                    logger.error(f"Request denied to connect")
+        except Exception as e:
+            logger.error(f"Failed to connect to chat: {str(e)}")
+
+    def send_message(self, content):
+        try:
+            message = chatserver_pb2.SendMessageRequest(sender="localhost:55", receiver="localhost:22", message=content)
+            res = self.chat.stub.SendMessage(message)
+            #print("Response : " + res.message)
+            #logger.info("Message sent sucessfully")
+        except Exception as e:
+            logger.error(f"Failed to connect to chat: {str(e)}")
+
+    def listen_to_messages(self):
+        try:
+            start_server(self.save_message)
         except Exception as e:
             logger.error(f"Failed to connect to chat: {str(e)}")
 
@@ -69,6 +106,54 @@ class ChatClient:
         except Exception as e:
             logger.error(f"Failed to show options: {str(e)}")
 
+    def save_message(self, message):
+        self.message = message
+        self.new_message = True
+
 if __name__ == '__main__':
-    client = ChatClient()
-    client.show_options()
+    port = str(input("Enter your port:"))
+    current = 'localhost:' + port
+    client = ChatClient(current)
+    # client.show_options()
+
+
+
+
+
+    # create a gRPC server
+    server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
+
+    # use the generated function `add_InsultingServiceServicer_to_server`
+    # to add the defined class to the server
+    chatserver_pb2_grpc.add_ChatServerServicer_to_server(
+        MessageServer(client), server)
+
+    # listen on port 50051
+    print('Starting server. Listening on port ' + port)
+    server.add_insecure_port(current)
+    server.start()
+
+    #
+
+    # since server.start() will not block,
+    # a sleep-loop is added to keep alive
+    try:
+        while True:
+
+            if client.connected:
+                print("Enter a message: ")
+                msg = input()
+                client.send_message(msg)
+                if client.new_message:
+                    print(client.message)
+                    client.new_message = False
+            else:
+                con = int(input("Enter port to connect:"))
+                if con != 0:
+                    client.connect_to_chat("localhost", con, False)
+            time.sleep(1)
+
+    except KeyboardInterrupt:
+        server.stop()
+
+

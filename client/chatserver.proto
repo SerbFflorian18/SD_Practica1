@@ -18,7 +18,6 @@ message ConnectToChatResponse {
     int32 accept = 1;
 }
 
-
 message SendMessageRequest {
     string sender = 1;
     string receiver = 2;
@@ -41,7 +40,6 @@ message ReceiveMessageResponse {
         string message = 2;
     }
 }
-
 
 message SubscribeToGroupChatRequest {}
 
